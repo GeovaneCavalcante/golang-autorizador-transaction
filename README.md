@@ -35,7 +35,7 @@
 
 	make test-integration
 
-5° Verificação da cobertura de teste
+5° Verificação da cobertura de testes
 
 	make test-cov
 
