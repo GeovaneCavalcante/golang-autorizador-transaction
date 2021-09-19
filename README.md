@@ -52,3 +52,6 @@ Download das dependencias
 Executando aplicação sem build
 
     make run
+
+##Notas adicionais 
+A cobertura de teste pode ser vizualizada através de um arquivo **cover.html** na raiz do projeto.
