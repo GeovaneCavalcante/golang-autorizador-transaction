@@ -9,13 +9,13 @@
 ## Dependências
 - [uuid](https://github.com/google/uuid)
     - O pacote uuid gera e inspeciona UUIDs com base no [RFC 4122](https://datatracker.ietf.org/doc/html/rfc4122).
-    - Utilizado como identificador único de entidades
+    - Utilizado como identificador único de entidades.
 - [gomock](https://github.com/golang/mock)
     - Gomock é uma estrutura de simulação para linguagem Go. 
-    - Utilizado na geração de código que simula objetos para testes
+    - Utilizado na geração de código que simula objetos para testes.
 - [testify](https://github.com/stretchr/testify)
-    -  Fornece muitas ferramentas para testar que seu código se comportará como você deseja.
-    - Utilizado para fazer asserções nos testes
+    -  Fornece muitas ferramentas para testar se seu código se comporta como você deseja.
+    - Utilizado para fazer asserções nos testes.
 
 ## Executando projeto
 
@@ -45,7 +45,7 @@ Gerando/Atualizando mocks
     
     make build-mocks
 
-Download das dependencias
+Download das dependências
 
     make dependencies
 
@@ -54,4 +54,4 @@ Executando aplicação sem build
     make run
 
 ## Notas adicionais 
-A cobertura de teste pode ser vizualizada através de um arquivo **cover.html** na raiz do projeto.
+A cobertura de teste pode ser visualizada através de um arquivo **cover.html** na raiz do projeto.
