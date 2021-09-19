@@ -1,0 +1,711 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>handler: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/authorizer/cmd/handler/account.go (100.0%)</option>
+				
+				<option value="file1">github.com/authorizer/cmd/handler/transaction.go (100.0%)</option>
+				
+				<option value="file2">github.com/authorizer/cmd/presenter/account.go (100.0%)</option>
+				
+				<option value="file3">github.com/authorizer/entity/account.go (100.0%)</option>
+				
+				<option value="file4">github.com/authorizer/entity/entity.go (100.0%)</option>
+				
+				<option value="file5">github.com/authorizer/entity/transaction.go (100.0%)</option>
+				
+				<option value="file6">github.com/authorizer/infrastructure/repository/account_inme.go (100.0%)</option>
+				
+				<option value="file7">github.com/authorizer/infrastructure/repository/transaction_inme.go (100.0%)</option>
+				
+				<option value="file8">github.com/authorizer/usecase/account/fixture.go (100.0%)</option>
+				
+				<option value="file9">github.com/authorizer/usecase/account/inmen.go (100.0%)</option>
+				
+				<option value="file10">github.com/authorizer/usecase/account/service.go (100.0%)</option>
+				
+				<option value="file11">github.com/authorizer/usecase/transaction/fixture.go (100.0%)</option>
+				
+				<option value="file12">github.com/authorizer/usecase/transaction/inmen.go (100.0%)</option>
+				
+				<option value="file13">github.com/authorizer/usecase/transaction/service.go (100.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package handler
+
+import (
+        "github.com/authorizer/cmd/presenter"
+        "github.com/authorizer/usecase/account"
+)
+
+//MakeAccountHandlers make account handlers
+func MakeAccountHandlers(service account.UseCase, accountData map[string]interface{}) (*presenter.AccountWrapper, error) <span class="cov8" title="1">{
+        activeCard := accountData["active-card"].(bool)
+        availableLimit := int(accountData["available-limit"].(float64))
+        acc, err := service.CreateAccount(activeCard, availableLimit)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">accountPresenter := presenter.NewAccountWrapper(acc, acc.Violations)
+        return accountPresenter, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package handler
+
+import (
+        "github.com/authorizer/cmd/presenter"
+        "github.com/authorizer/usecase/account"
+        "github.com/authorizer/usecase/transaction"
+)
+
+//MakeTransactionHandlers make transaction handlers
+func MakeTransactionHandlers(transactionService transaction.UseCase, accountService account.UseCase, transactionData map[string]interface{}) (*presenter.AccountWrapper, error) <span class="cov8" title="1">{
+        merchant := transactionData["merchant"].(string)
+        amount := int(transactionData["amount"].(float64))
+        time := transactionData["time"].(string)
+
+        t, err := transactionService.CreateTransaction(merchant, amount, time)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">acc, err := accountService.GetAccount()
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">accountPresenter := presenter.NewAccountWrapper(acc, t.Violations)
+        return accountPresenter, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package presenter
+
+import "github.com/authorizer/entity"
+
+//Account data
+type Account struct {
+        ActiveCard     bool `json:"active-card"`
+        AvailableLimit int  `json:"available-limit"`
+}
+
+// AccountWrapper data
+type AccountWrapper struct {
+        Account    interface{} `json:"account"`
+        Violations []string    `json:"violations"`
+}
+
+// NewAccountWrapper account wrapper creator
+func NewAccountWrapper(c *entity.Account, violations []string) *AccountWrapper <span class="cov8" title="1">{
+        if c == nil </span><span class="cov8" title="1">{
+                return &amp;AccountWrapper{
+                        Account:    make(map[string]interface{}),
+                        Violations: violations,
+                }
+        }</span>
+        <span class="cov8" title="1">return &amp;AccountWrapper{
+                Account: Account{
+                        ActiveCard:     c.ActiveCard,
+                        AvailableLimit: c.AvailableLimit,
+                },
+                Violations: violations,
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package entity
+
+//Account data
+type Account struct {
+        ID             ID
+        ActiveCard     bool
+        AvailableLimit int
+        Violations     []string
+}
+
+//NewAccount create a new account
+func NewAccount(activeCard bool, availableLimit int, violations []string) *Account <span class="cov8" title="1">{
+        c := &amp;Account{
+                ID:             NewID(),
+                ActiveCard:     activeCard,
+                AvailableLimit: availableLimit,
+                Violations:     violations,
+        }
+        return c
+}</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package entity
+
+import "github.com/google/uuid"
+
+//ID entity ID
+type ID = uuid.UUID
+
+//NewID create a new entity ID
+func NewID() ID <span class="cov8" title="1">{
+        return uuid.New()
+}</span>
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package entity
+
+import (
+        "time"
+)
+
+// Transaction data
+type Transaction struct {
+        ID         ID
+        Merchant   string
+        Amount     int
+        Violations []string
+        Time       time.Time
+}
+
+//NewTransaction create a new transaction
+func NewTransaction(merchant string, amount int, timeData string, violations []string) (*Transaction, error) <span class="cov8" title="1">{
+        tm, err := time.Parse(time.RFC3339, timeData)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">t := &amp;Transaction{
+                ID:         NewID(),
+                Merchant:   merchant,
+                Amount:     amount,
+                Time:       tm,
+                Violations: violations,
+        }
+        return t, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package repository
+
+import (
+        "github.com/authorizer/entity"
+)
+
+//AccountInme in memory repo
+type AccountInme struct {
+        data *entity.Account
+}
+
+//NewAccountInme create new repository
+func NewAccountInme() *AccountInme <span class="cov8" title="1">{
+        return &amp;AccountInme{}
+}</span>
+
+//Get account
+func (r *AccountInme) Get() (*entity.Account, error) <span class="cov8" title="1">{
+        return r.data, nil
+}</span>
+
+//Create account
+func (r *AccountInme) Create(e *entity.Account) (*entity.Account, error) <span class="cov8" title="1">{
+        r.data = e
+        return e, nil
+}</span>
+
+//Update account
+func (r *AccountInme) Update(e *entity.Account) (*entity.Account, error) <span class="cov8" title="1">{
+        r.data = e
+        return e, nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package repository
+
+import (
+        "github.com/authorizer/entity"
+)
+
+//TransactionInme in memory repo
+type TransactionInme struct {
+        data []*entity.Transaction
+}
+
+//NewTransactionInme create new repository
+func NewTransactionInme() *TransactionInme <span class="cov8" title="1">{
+        return &amp;TransactionInme{}
+}</span>
+
+//Create transaction
+func (r *TransactionInme) Create(e *entity.Transaction) (*entity.Transaction, error) <span class="cov8" title="1">{
+        r.data = append(r.data, e)
+        return e, nil
+}</span>
+
+//List transaction
+func (r *TransactionInme) List() ([]*entity.Transaction, error) <span class="cov8" title="1">{
+        return r.data, nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package account
+
+import "github.com/authorizer/entity"
+
+func NewFixtureAccount() entity.Account <span class="cov8" title="1">{
+        return entity.Account{
+                ID:             entity.NewID(),
+                ActiveCard:     true,
+                AvailableLimit: 1000,
+                Violations:     make([]string, 0, 0),
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package account
+
+import (
+        "errors"
+        "github.com/authorizer/entity"
+)
+
+// Repo in memory
+type inmem struct {
+        data      *entity.Account
+        errGet    bool
+        errCreate bool
+        errUpdate bool
+}
+
+//newInmem create new repository in memory
+func newInmem(errGet, errCreate, errUpdate bool) *inmem <span class="cov8" title="1">{
+        return &amp;inmem{
+                errGet:    errGet,
+                errCreate: errCreate,
+                errUpdate: errUpdate,
+        }
+}</span>
+
+//Get account
+func (r *inmem) Get() (*entity.Account, error) <span class="cov8" title="1">{
+        if r.errGet </span><span class="cov8" title="1">{
+                return nil, errors.New("Empty account")
+        }</span>
+        <span class="cov8" title="1">return r.data, nil</span>
+}
+
+//Create account
+func (r *inmem) Create(e *entity.Account) (*entity.Account, error) <span class="cov8" title="1">{
+        if r.errCreate </span><span class="cov8" title="1">{
+                return nil, errors.New("Error create account")
+        }</span>
+        <span class="cov8" title="1">r.data = e
+        return e, nil</span>
+}
+
+//Update account
+func (r *inmem) Update(e *entity.Account) (*entity.Account, error) <span class="cov8" title="1">{
+        if r.errUpdate </span><span class="cov8" title="1">{
+                return nil, errors.New("Error update account")
+        }</span>
+        <span class="cov8" title="1">r.data = e
+        return e, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package account
+
+import (
+        "github.com/authorizer/entity"
+)
+
+//Service book usecase
+type Service struct {
+        repo Repository
+}
+
+//NewService create new service
+func NewService(r Repository) *Service <span class="cov8" title="1">{
+        return &amp;Service{
+                repo: r,
+        }
+}</span>
+
+//CreateAccount create account
+func (s *Service) CreateAccount(activeCard bool, availableLimit int) (*entity.Account, error) <span class="cov8" title="1">{
+        violations := make([]string, 0, 0)
+        c, err := s.GetAccount()
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, entity.ErrGetAccount
+        }</span>
+        <span class="cov8" title="1">if c != nil </span><span class="cov8" title="1">{
+                violations = append(violations, entity.AccountAlreadyInitialized)
+                c.Violations = violations
+                return c, nil
+        }</span>
+        <span class="cov8" title="1">c = entity.NewAccount(activeCard, availableLimit, violations)
+        c, err = s.repo.Create(c)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, entity.ErrCreateAccount
+        }</span>
+        <span class="cov8" title="1">return c, nil</span>
+}
+
+//DeductAccountValue update account limit
+func (s *Service) DeductAccountValue(amount int) (*entity.Account, error) <span class="cov8" title="1">{
+        c, err := s.GetAccount()
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, entity.ErrGetAccount
+        }</span>
+        <span class="cov8" title="1">c.AvailableLimit -= amount
+        c, err = s.repo.Update(c)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, entity.ErrUpdateAccount
+        }</span>
+        <span class="cov8" title="1">return c, err</span>
+}
+
+//GetAccount get account
+func (s *Service) GetAccount() (*entity.Account, error) <span class="cov8" title="1">{
+        c, err := s.repo.Get()
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, entity.ErrGetAccount
+        }</span>
+        <span class="cov8" title="1">return c, nil</span>
+}
+
+//AccountInitializationVerification account Initialization Verification
+func (s *Service) AccountInitializationVerification() (bool, error) <span class="cov8" title="1">{
+        c, err := s.GetAccount()
+        if err != nil </span><span class="cov8" title="1">{
+                return false, entity.ErrGetAccount
+        }</span>
+        <span class="cov8" title="1">if c == nil </span><span class="cov8" title="1">{
+                return false, nil
+        }</span>
+        <span class="cov8" title="1">return true, nil</span>
+}
+
+//CheckActiveCard check if the card is active
+func (s *Service) CheckActiveCard() (bool, error) <span class="cov8" title="1">{
+        c, err := s.GetAccount()
+        if err != nil </span><span class="cov8" title="1">{
+                return false, entity.ErrGetAccount
+        }</span>
+        <span class="cov8" title="1">return c.ActiveCard, nil</span>
+}
+
+//CheckBalanceForTransaction check if you have available balance for a transaction
+func (s *Service) CheckBalanceForTransaction(amount int) (bool, error) <span class="cov8" title="1">{
+        c, err := s.GetAccount()
+        if err != nil </span><span class="cov8" title="1">{
+                return false, entity.ErrGetAccount
+        }</span>
+        <span class="cov8" title="1">if c.AvailableLimit &gt;= amount </span><span class="cov8" title="1">{
+                return true, nil
+        }</span>
+        <span class="cov8" title="1">return false, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package transaction
+
+import (
+        "github.com/authorizer/entity"
+        "time"
+)
+
+func NewFixtureTransaction() entity.Transaction <span class="cov8" title="1">{
+        t, _ := time.Parse(time.RFC3339, "2019-02-13T11:01:31.000Z")
+        return entity.Transaction{
+                ID:         entity.NewID(),
+                Amount:     100,
+                Time:       t,
+                Violations: make([]string, 0, 0),
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package transaction
+
+import (
+        "errors"
+        "github.com/authorizer/entity"
+)
+
+// Repo in memory
+type inmem struct {
+        data      []*entity.Transaction
+        errCreate bool
+        errList   bool
+}
+
+//newInmem create new repository in memory
+func newInmem(errCreate, errList bool) *inmem <span class="cov8" title="1">{
+        return &amp;inmem{
+                errCreate: errCreate,
+                errList:   errList,
+        }
+}</span>
+
+//Create transaction
+func (r *inmem) Create(e *entity.Transaction) (*entity.Transaction, error) <span class="cov8" title="1">{
+        if r.errCreate </span><span class="cov8" title="1">{
+                return nil, errors.New("Error create transaction")
+        }</span>
+        <span class="cov8" title="1">r.data = append(r.data, e)
+        return e, nil</span>
+}
+
+//List transaction
+func (r *inmem) List() ([]*entity.Transaction, error) <span class="cov8" title="1">{
+        if r.errList </span><span class="cov8" title="1">{
+                return nil, errors.New("Error list transactions")
+        }</span>
+        <span class="cov8" title="1">return r.data, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package transaction
+
+import (
+        "github.com/authorizer/entity"
+        "github.com/authorizer/usecase/account"
+)
+
+//Service book usecase
+type Service struct {
+        accountService account.UseCase
+        repo           Repository
+}
+
+//NewService create new service
+func NewService(r Repository, accountService account.UseCase) *Service <span class="cov8" title="1">{
+        return &amp;Service{
+                repo:           r,
+                accountService: accountService,
+        }
+}</span>
+
+//CreateTransaction create transaction
+func (s *Service) CreateTransaction(merchant string, amount int, timeData string) (*entity.Transaction, error) <span class="cov8" title="1">{
+        violations := make([]string, 0, 0)
+
+        t, err := entity.NewTransaction(merchant, amount, timeData, violations)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">t, valid, err := s.ValidateTransaction(t)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, entity.ErrValidateTransaction
+        }</span>
+        <span class="cov8" title="1">if !valid </span><span class="cov8" title="1">{
+                return t, nil
+        }</span>
+
+        <span class="cov8" title="1">t, err = s.repo.Create(t)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, entity.ErrCreateTransaction
+        }</span>
+        <span class="cov8" title="1">_, err = s.accountService.DeductAccountValue(amount)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return t, nil</span>
+}
+
+//ListTransactions getting all transactions
+func (s *Service) ListTransactions() ([]*entity.Transaction, error) <span class="cov8" title="1">{
+        c, err := s.repo.List()
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, entity.ErrListTransactions
+        }</span>
+        <span class="cov8" title="1">return c, nil</span>
+}
+
+//ValidateTransaction validate transaction
+func (s *Service) ValidateTransaction(t *entity.Transaction) (*entity.Transaction, bool, error) <span class="cov8" title="1">{
+        violations := make([]string, 0, 0)
+        valid := true
+
+        accountVerify, err := s.accountService.AccountInitializationVerification()
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, false, err
+        }</span>
+        <span class="cov8" title="1">if !accountVerify </span><span class="cov8" title="1">{
+                violations = append(violations, entity.AccountNotInitialized)
+                t.Violations = violations
+                return t, false, nil
+        }</span>
+
+        <span class="cov8" title="1">activeCard, err := s.accountService.CheckActiveCard()
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, false, err
+        }</span>
+        <span class="cov8" title="1">if !activeCard </span><span class="cov8" title="1">{
+                violations = append(violations, entity.CardNotActive)
+                t.Violations = violations
+                valid = false
+        }</span>
+
+        <span class="cov8" title="1">enoughLimit, err := s.accountService.CheckBalanceForTransaction(t.Amount)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, false, err
+        }</span>
+        <span class="cov8" title="1">if !enoughLimit </span><span class="cov8" title="1">{
+                violations = append(violations, entity.InsufficientLimit)
+                t.Violations = violations
+                valid = false
+        }</span>
+
+        <span class="cov8" title="1">authorization, err := s.CheckTransitionFrequency(t)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, false, err
+        }</span>
+        <span class="cov8" title="1">if !authorization </span><span class="cov8" title="1">{
+                violations = append(violations, entity.HighFrequencySmallInterval)
+                t.Violations = violations
+                valid = false
+        }</span>
+        <span class="cov8" title="1">authorization, err = s.CheckDoubleTransaction(t)
+        if !authorization </span><span class="cov8" title="1">{
+                violations = append(violations, entity.DoubledTransaction)
+                t.Violations = violations
+                valid = false
+        }</span>
+
+        <span class="cov8" title="1">t.Violations = violations
+
+        return t, valid, nil</span>
+}
+
+//CheckTransitionFrequency check transition frequency
+func (s *Service) CheckTransitionFrequency(t *entity.Transaction) (bool, error) <span class="cov8" title="1">{
+        transactions, err := s.ListTransactions()
+        if err != nil </span><span class="cov8" title="1">{
+                return false, err
+        }</span>
+        <span class="cov8" title="1">valid := false
+        if len(transactions) &lt; 3 </span><span class="cov8" title="1">{
+                return true, nil
+        }</span>
+        <span class="cov8" title="1">for i := 1; i &lt;= 3; i++ </span><span class="cov8" title="1">{
+                transaction := transactions[len(transactions)-i]
+                diffTime := t.Time.Sub(transaction.Time).Seconds()
+                if diffTime &gt; 120 </span><span class="cov8" title="1">{
+                        valid = true
+                }</span>
+        }
+        <span class="cov8" title="1">return valid, nil</span>
+}
+
+//CheckDoubleTransaction check double transaction
+func (s *Service) CheckDoubleTransaction(t *entity.Transaction) (bool, error) <span class="cov8" title="1">{
+        transactions, err := s.ListTransactions()
+        if err != nil </span><span class="cov8" title="1">{
+                return false, err
+        }</span>
+        <span class="cov8" title="1">valid := true
+        if len(transactions) &lt; 1 </span><span class="cov8" title="1">{
+                return true, nil
+        }</span>
+        <span class="cov8" title="1">for i := 1; i &lt;= len(transactions); i++ </span><span class="cov8" title="1">{
+                transaction := transactions[len(transactions)-i]
+                diffTime := t.Time.Sub(transaction.Time).Seconds()
+                if diffTime &lt; 120 &amp;&amp; transaction.Amount == t.Amount &amp;&amp; transaction.Merchant == t.Merchant </span><span class="cov8" title="1">{
+                        valid = false
+                }</span>
+        }
+        <span class="cov8" title="1">return valid, nil</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
