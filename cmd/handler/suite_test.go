@@ -11,24 +11,24 @@ import (
 	"testing"
 )
 
-type e2eTestSuite struct {
+type integrationTestSuite struct {
 	suite.Suite
 	accountService     *account.Service
 	transactionService *transaction.Service
 }
 
-func TestE2ETestSuite(t *testing.T) {
-	suite.Run(t, &e2eTestSuite{})
+func TestIntegrationTestSuite(t *testing.T) {
+	suite.Run(t, &integrationTestSuite{})
 }
 
-func (s *e2eTestSuite) SetupTest() {
+func (s *integrationTestSuite) SetupTest() {
 	accountRepo := repository.NewAccountInme()
 	s.accountService = account.NewService(accountRepo)
 	transactionRepo := repository.NewTransactionInme()
 	s.transactionService = transaction.NewService(transactionRepo, s.accountService)
 }
 
-func (s *e2eTestSuite) TearDownTest() {
+func (s *integrationTestSuite) TearDownTest() {
 	s.accountService = nil
 	s.transactionService = nil
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (s *e2eTestSuite) TestCreateTransaction() {
+func (s *integrationTestSuite) TestCreateTransaction() {
 	input := `{"account": {"active-card": true, "available-limit": 1000}}`
 	val := NewInputData(input)
 	out, err := MakeAccountHandlers(s.accountService, val["account"])
@@ -20,7 +20,7 @@ func (s *e2eTestSuite) TestCreateTransaction() {
 	assert.NotEqual(s.T(), out.Account, make(map[string]interface{}))
 }
 
-func (s *e2eTestSuite) TestCreateAccountViolationAccountNotInitialized() {
+func (s *integrationTestSuite) TestCreateAccountViolationAccountNotInitialized() {
 	input := `{"transaction": {"merchant": "Vivara", "amount": 100.0, "time": "2019-02-13T11:00:00.000Z"}}`
 	val := NewInputData(input)
 	out, err := MakeTransactionHandlers(s.transactionService, s.accountService, val["transaction"])
@@ -32,7 +32,7 @@ func (s *e2eTestSuite) TestCreateAccountViolationAccountNotInitialized() {
 	assert.Equal(s.T(), out.Account, make(map[string]interface{}))
 }
 
-func (s *e2eTestSuite) TestCreateAccountViolationCardNotActive() {
+func (s *integrationTestSuite) TestCreateAccountViolationCardNotActive() {
 	input := `{"account": {"active-card": false, "available-limit": 1000}}`
 	val := NewInputData(input)
 	out, err := MakeAccountHandlers(s.accountService, val["account"])
@@ -47,7 +47,7 @@ func (s *e2eTestSuite) TestCreateAccountViolationCardNotActive() {
 	assert.NotEqual(s.T(), out.Account, make(map[string]interface{}))
 }
 
-func (s *e2eTestSuite) TestCreateAccountViolationInsufficientLimit() {
+func (s *integrationTestSuite) TestCreateAccountViolationInsufficientLimit() {
 	input := `{"account": {"active-card": true, "available-limit": 1000}}`
 	val := NewInputData(input)
 	out, err := MakeAccountHandlers(s.accountService, val["account"])
@@ -62,7 +62,7 @@ func (s *e2eTestSuite) TestCreateAccountViolationInsufficientLimit() {
 	assert.NotEqual(s.T(), out.Account, make(map[string]interface{}))
 }
 
-func (s *e2eTestSuite) TestCreateAccountViolationHighFrequencySmallInterval() {
+func (s *integrationTestSuite) TestCreateAccountViolationHighFrequencySmallInterval() {
 	input := `{"account": {"active-card": true, "available-limit": 1000}}`
 	val := NewInputData(input)
 	out, err := MakeAccountHandlers(s.accountService, val["account"])
@@ -86,7 +86,7 @@ func (s *e2eTestSuite) TestCreateAccountViolationHighFrequencySmallInterval() {
 	assert.NotEqual(s.T(), out.Account, make(map[string]interface{}))
 }
 
-func (s *e2eTestSuite) TestCreateAccountViolationDoubledTransaction() {
+func (s *integrationTestSuite) TestCreateAccountViolationDoubledTransaction() {
 	input := `{"account": {"active-card": true, "available-limit": 1000}}`
 	val := NewInputData(input)
 	out, err := MakeAccountHandlers(s.accountService, val["account"])

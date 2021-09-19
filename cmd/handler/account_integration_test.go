@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (s *e2eTestSuite) TestCreateAccount() {
+func (s *integrationTestSuite) TestCreateAccount() {
 	input := `{"account": {"active-card": true, "available-limit": 1000}}`
 	val := NewInputData(input)
 	out, err := MakeAccountHandlers(s.accountService, val["account"])
@@ -17,7 +17,7 @@ func (s *e2eTestSuite) TestCreateAccount() {
 	assert.NotEqual(s.T(), out.Account, make(map[string]interface{}))
 }
 
-func (s *e2eTestSuite) TestCreateAccountViolationAccountAlreadyInitialized() {
+func (s *integrationTestSuite) TestCreateAccountViolationAccountAlreadyInitialized() {
 	input := `{"account": {"active-card": true, "available-limit": 1000}}`
 	val := NewInputData(input)
 	out, err := MakeAccountHandlers(s.accountService, val["account"])
