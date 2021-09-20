@@ -21,11 +21,11 @@
 
 2º Construíndo build da aplicação
 
-	make build
+	make build-image
 
 3º Executando aplicação 
 
-	./autorizador < operations
+	make run < operations
 
 4º Executando testes
 
@@ -49,9 +49,9 @@ Download das dependências
 
     make dependencies
 
-Executando aplicação sem build
+Gerando binário local
 
-    make run
+    make build
 
 ## Notas adicionais 
 A cobertura de teste pode ser visualizada através de um arquivo **cover.html** na raiz do projeto.

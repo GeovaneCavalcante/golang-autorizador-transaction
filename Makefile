@@ -22,6 +22,9 @@ test-integration:
 	go test -tags=integration $(INTEGRATION_TEST_PATH) -v -count=1
 
 run:
-	go run -race ./cmd/main.go
+	docker run -i autorizador
 
 build: dependencies build-cmd
+
+build-image:
+	docker build -t autorizador .
